@@ -1,9 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <!-- 视口设置，禁止缩放 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- 第三方资源CDN -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.staticfile.net/font-awesome/5.15.4/css/all.min.css">
+    
     <style>
-        /* 顶部容器 */
+        /* ---------- 布局样式 ---------- */
+        /* 顶部固定工具栏 */
         #topBar {
             position: fixed;
             top: 20px;
@@ -14,36 +20,37 @@
             z-index: 9999;
         }
 
-        /* 猫猫图标 */
+        /* 猫猫主图标样式 */
         #catIcon {
             font-size: 40px;
             cursor: pointer;
             transition: 
                 transform 0.3s ease,
                 filter 0.3s ease;
-            animation: catIdle 2s infinite;
-            user-select: none;
+            animation: catIdle 2s infinite;  /* 默认空闲动画 */
+            user-select: none;  /* 禁止文字选中 */
         }
         #catIcon:hover {
             transform: scale(1.1);
-            filter: drop-shadow(0 0 8px gold);
+            filter: drop-shadow(0 0 8px gold);  /* 悬浮发光效果 */
         }
         #catIcon:active {
-            animation: catJump 0.5s;
+            animation: catJump 0.5s;  /* 点击时播放跳跃动画 */
         }
 
-        /* 计数器 */
+        /* 幸运计数器样式 */
         #luckCounter {
             font-size: 24px;
             color: gold;
             text-shadow: 0 0 10px rgba(255,215,0,0.5);
-            background: rgba(0,0,0,0.3);
+            background: rgba(0,0,0,0.3);  /* 半透明背景 */
             padding: 10px 20px;
             border-radius: 20px;
             transition: transform 0.3s;
-            backdrop-filter: blur(3px);
+            backdrop-filter: blur(3px);  /* 背景模糊效果 */
         }
 
+        /* ---------- 页面基础样式 ---------- */
         body {
             background: linear-gradient(
                 45deg,
@@ -51,89 +58,93 @@
                 var(--color2),
                 var(--color3)
             );
-            background-size: 400% 400%;
+            background-size: 400% 400%;  /* 渐变背景动效 */
             overflow: hidden;
             margin: 0;
             height: 100vh;
             cursor: pointer;
             transition: 
                 background-position 8s ease-in-out,
-                background 8s ease-in-out;
-            --color1: #ff6666;
-            --color2: #ff9999;
-            --color3: #ffcccc;
+                background 8s ease-in-out;  /* 背景渐变过渡 */
+            --color1: #ff6666;  /* 默认渐变色1 */
+            --color2: #ff9999;  /* 默认渐变色2 */
+            --color3: #ffcccc;  /* 默认渐变色3 */
         }
 
+        /* 祝福文字动画元素 */
         .blessing {
             position: absolute;
             font-size: 24px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-            white-space: nowrap;
+            white-space: nowrap;  /* 禁止换行 */
             animation: floatUp var(--duration) linear forwards;
-            will-change: transform;
-            --duration: 10s;
-            --rotate-end: 360deg;
+            will-change: transform;  /* 优化动画性能 */
+            --duration: 10s;  /* 动画持续时间 */
+            --rotate-end: 360deg;  /* 旋转角度 */
         }
 
+        /* 粒子效果样式 */
         .particle {
             position: absolute;
             border-radius: 50%;
-            pointer-events: none;
+            pointer-events: none;  /* 禁止鼠标交互 */
             animation: 
                 particleMove var(--particle-dur) ease-out forwards,
                 particleFade var(--particle-dur) ease-out,
-                particlePulse var(--particle-dur) linear;
+                particlePulse var(--particle-dur) linear;  /* 组合动画 */
             filter: drop-shadow(0 0 5px currentColor);
             background: currentColor;
             width: var(--size);
             height: var(--size);
         }
 
-        /* 动画定义 */
+        /* ---------- 动画定义 ---------- */
+        /* 祝福文字上浮动画 */
         @keyframes floatUp {
             0% { transform: translateY(0) rotate(0deg); opacity: 1; }
             100% { transform: translateY(-100vh) rotate(var(--rotate-end)); opacity: 0; }
         }
 
+        /* 粒子运动动画 */
         @keyframes particleMove {
             to {
                 transform: 
                     translate( 
-                        calc(var(--dx) * 200px), 
-                        calc(var(--dy) * 200px - 100px) 
+                        calc(var(--dx) * 200px),  /* X轴位移量 */
+                        calc(var(--dy) * 200px - 100px)  /* Y轴位移量 */
                     )
                     scale(1.2);
             }
         }
 
+        /* 粒子淡出动画 */
         @keyframes particleFade {
             to { opacity: 0; }
         }
 
+        /* 粒子脉冲动画 */
         @keyframes particlePulse {
             50% { transform: scale(1.5); }
         }
 
-        /* 猫猫动画 */
-        @keyframes catIdle {
+        /* 猫猫动画集合 */
+        @keyframes catIdle {  /* 空闲状态微动 */
             0%, 100% { transform: translateY(0) rotate(0deg); }
             50% { transform: translateY(-5px) rotate(5deg); }
         }
-        @keyframes catJump {
+        @keyframes catJump {  /* 点击跳跃动画 */
             0% { transform: translateY(0); }
             50% { transform: translateY(-20px) rotate(-10deg); }
             100% { transform: translateY(0); }
         }
-        /* ▼▼▼ 新增动画 ▼▼▼ */
-        @keyframes catBounce {
+        @keyframes catBounce {  /* 弹性动画 */
             0%, 100% { transform: translateY(0) scale(1); }
             25% { transform: translateY(-15px) scale(1.2); }
             50% { transform: translateY(0) scale(0.9); }
             75% { transform: translateY(-8px) scale(1.1); }
         }
-        /* ▲▲▲ 新增动画 ▲▲▲ */
 
-        /* 移动端适配 */
+        /* ---------- 移动端适配 ---------- */
         @media (max-width: 600px) {
             .blessing { 
                 font-size: 24px;
@@ -148,7 +159,7 @@
                 gap: 10px;
             }
             #catIcon {
-                font-size: 50px;
+                font-size: 50px;  /* 放大触控区域 */
             }
             #luckCounter {
                 font-size: 32px;
@@ -158,18 +169,20 @@
     </style>
 </head>
 <body>
-    <!-- 顶部交互区 -->
+    <!-- 顶部交互区域 -->
     <div id="topBar">
         <div id="catIcon" title="摸摸猫猫">🐱</div>
         <div id="luckCounter">好运+0</div>
     </div>
 
     <script>
-        // 初始化计数器
+        // ========== 初始化 ==========
+        // 读取本地存储的点击次数
         let luckCount = parseInt(localStorage.getItem('luckCount')) || 0;
         const counterEl = document.getElementById('luckCounter');
         counterEl.textContent = `好运+${luckCount}`;
 
+        // 祝福语库
         const blessings = [
             "🎤 希望侗儿小姐姐，早日康复！",
             "✨ 世界第一可爱侗儿！",
@@ -183,10 +196,13 @@
             "🌈 侗儿的笑容是我的阳光"
         ];
 
+        // ========== 工具函数 ==========
+        // 生成随机颜色（暖色调）
         function getRandomColor() {
             return `hsl(${30 + Math.random()*60}, 100%, 65%)`;
         }
 
+        // 生成渐变颜色组
         function getRandomGradient() {
             const baseHue = Math.random() * 360;
             return [
@@ -196,16 +212,19 @@
             ];
         }
 
+        // 创建祝福文字元素
         function createBlessing(x, y) {
             const bless = document.createElement('div');
             bless.className = 'blessing';
             bless.textContent = blessings[Math.floor(Math.random() * blessings.length)];
             bless.style.color = getRandomColor();
             
+            // 随机旋转方向和持续时间
             const rotation = (Math.random() > 0.5 ? 1 : -1) * 360 * (1 + Math.random()*2);
             bless.style.setProperty('--rotate-end', `${rotation}deg`);
             bless.style.setProperty('--duration', `${5 + Math.random() * 10}s`);
             
+            // 定位逻辑：限制在屏幕宽度范围内
             bless.style.left = Math.min(
                 x || Math.random() * window.innerWidth * 0.7, 
                 window.innerWidth - 300
@@ -213,46 +232,49 @@
             bless.style.top = (y || window.innerHeight - 100) + 'px';
             
             document.body.appendChild(bless);
-            setTimeout(() => bless.remove(), 15000);
+            setTimeout(() => bless.remove(), 15000);  // 15秒后自动移除
         }
 
-        // 猫猫点击事件
+        // ========== 事件监听 ==========
+        // 猫猫图标点击事件（生成金色粒子）
         document.getElementById('catIcon').addEventListener('click', function(e) {
             for(let i=0; i<15; i++) {
-                const angle = Math.random() * Math.PI * 2;
+                const angle = Math.random() * Math.PI * 2;  // 随机角度
                 const particle = document.createElement('div');
-                const size = 8 + Math.random() * 12;
-                const speed = 0.5 + Math.random();
+                const size = 8 + Math.random() * 12;  // 随机大小
+                const speed = 0.5 + Math.random();    // 随机速度
                 
+                // 粒子样式设置
                 particle.style.cssText = `
                     left: ${e.clientX - size/2}px;
                     top: ${e.clientY - size/2}px;
                     color: gold;
                     --size: ${size}px;
-                    --dx: ${Math.cos(angle) * speed};
-                    --dy: ${Math.sin(angle) * speed - 0.5};
+                    --dx: ${Math.cos(angle) * speed};  // X轴方向分量
+                    --dy: ${Math.sin(angle) * speed - 0.5};  // Y轴方向分量（带向上偏移）
                     --particle-dur: ${0.8 + Math.random() * 0.4}s;
                 `;
                 particle.className = 'particle';
                 document.body.appendChild(particle);
-                setTimeout(() => particle.remove(), 1200);
+                setTimeout(() => particle.remove(), 1200);  // 1.2秒后移除
             }
         });
 
-        // 全局点击事件
+        // 全局点击事件（主逻辑）
         document.body.addEventListener('click', (e) => {
+            // 更新计数器
             luckCount++;
             counterEl.textContent = `好运+${luckCount}`;
             localStorage.setItem('luckCount', luckCount);
 
-            // ▼▼▼ 新增动画触发 ▼▼▼
+            // 猫猫弹性动画触发
             const catIcon = document.getElementById('catIcon');
-            catIcon.style.animation = 'none';
+            catIcon.style.animation = 'none';  // 重置动画
             setTimeout(() => {
                 catIcon.style.animation = 'catBounce 0.6s ease';
             }, 50);
-            // ▲▲▲ 新增动画触发 ▲▲▲
 
+            // 更新背景渐变
             const [c1, c2, c3] = getRandomGradient();
             document.body.style.cssText = `
                 --color1: ${c1};
@@ -261,6 +283,7 @@
                 background-position: ${Math.random()*100}% ${Math.random()*100}%;
             `;
 
+            // 生成彩色粒子
             for(let i=0; i<30; i++) {
                 const angle = Math.random() * Math.PI * 2;
                 const particle = document.createElement('div');
@@ -282,11 +305,13 @@
                 setTimeout(() => particle.remove(), 1200);
             }
 
+            // 创建祝福文字
             createBlessing(e.clientX, e.clientY);
         });
 
+        // 定时生成随机祝福文字
         setInterval(() => createBlessing(), 2000 + Math.random()*2000);
-        createBlessing();
+        createBlessing();  // 初始生成
     </script>
 </body>
 </html>
