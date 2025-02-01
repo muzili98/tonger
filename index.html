@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <!-- 新增移动端视口设置 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
         body {
             background: linear-gradient(
@@ -45,6 +47,12 @@
             background: currentColor;
             width: var(--size);
             height: var(--size);
+        }
+
+        /* 新增移动端适配 */
+        @media (max-width: 600px) {
+            .blessing { font-size: 16px; }
+            .particle { --size: 3px; }
         }
 
         @keyframes floatUp {
@@ -109,15 +117,15 @@
             const rotation = (Math.random() > 0.5 ? 1 : -1) * 360 * (1 + Math.random()*2);
             bless.style.setProperty('--rotate-end', `${rotation}deg`);
             bless.style.setProperty('--duration', `${5 + Math.random() * 10}s`);
-            bless.style.left = (x || Math.random() * window.innerWidth * 0.8) + 'px';
-            bless.style.top = (y || window.innerHeight) + 'px';
+            // 修改位置计算逻辑
+            bless.style.left = Math.min(x || Math.random() * window.innerWidth * 0.8, window.innerWidth - 200) + 'px';
+            bless.style.top = (y || window.innerHeight - 50) + 'px';
             
             document.body.appendChild(bless);
             setTimeout(() => bless.remove(), 15000);
         }
 
         document.body.addEventListener('click', (e) => {
-            // 更新背景
             const [c1, c2, c3] = getRandomGradient();
             document.body.style.cssText = `
                 --color1: ${c1};
@@ -126,7 +134,6 @@
                 background-position: ${Math.random()*100}% ${Math.random()*100}%;
             `;
 
-            // 生成粒子
             for(let i=0; i<30; i++) {
                 const angle = Math.random() * Math.PI * 2;
                 const particle = document.createElement('div');
