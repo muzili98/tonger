@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <!-- 新增移动端视口设置 -->
+    <!-- 新增视口设置 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
         body {
@@ -49,10 +49,15 @@
             height: var(--size);
         }
 
-        /* 新增移动端适配 */
+        /* 移动端适配 */
         @media (max-width: 600px) {
-            .blessing { font-size: 16px; }
-            .particle { --size: 3px; }
+            .blessing { 
+                font-size: 48px;  /* 三倍放大 */
+                max-width: 80vw;  /* 新增宽度限制 */
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .particle { --size: 6px; }  /* 调大粒子尺寸 */
         }
 
         @keyframes floatUp {
@@ -117,9 +122,14 @@
             const rotation = (Math.random() > 0.5 ? 1 : -1) * 360 * (1 + Math.random()*2);
             bless.style.setProperty('--rotate-end', `${rotation}deg`);
             bless.style.setProperty('--duration', `${5 + Math.random() * 10}s`);
-            // 修改位置计算逻辑
-            bless.style.left = Math.min(x || Math.random() * window.innerWidth * 0.8, window.innerWidth - 200) + 'px';
-            bless.style.top = (y || window.innerHeight - 50) + 'px';
+            
+            // 优化后的位置计算
+            bless.style.left = Math.min(
+                x || Math.random() * window.innerWidth * 0.7, 
+                window.innerWidth - 300  // 右侧留出300px边距
+            ) + 'px';
+            
+            bless.style.top = (y || window.innerHeight - 100) + 'px';  // 初始高度提升100px
             
             document.body.appendChild(bless);
             setTimeout(() => bless.remove(), 15000);
