@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            background: linear-gradient(
+                45deg,
+                var(--color1),
+                var(--color2),
+                var(--color3)
+            );
+            background-size: 400% 400%;
+            overflow: hidden;
+            margin: 0;
+            height: 100vh;
+            cursor: pointer;
+            transition: 
+                background-position 8s ease-in-out,
+                background 8s ease-in-out;
+            --color1: #ff6666;
+            --color2: #ff9999;
+            --color3: #ffcccc;
+        }
+
+        .blessing {
+            position: absolute;
+            font-size: 24px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            white-space: nowrap;
+            animation: floatUp var(--duration) linear forwards;
+            will-change: transform;
+            --duration: 10s;
+            --rotate-end: 360deg;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: 
+                particleMove var(--particle-dur) ease-out forwards,
+                particleFade var(--particle-dur) ease-out,
+                particlePulse var(--particle-dur) linear;
+            filter: drop-shadow(0 0 5px currentColor);
+            background: currentColor;
+            width: var(--size);
+            height: var(--size);
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(var(--rotate-end)); opacity: 0; }
+        }
+
+        @keyframes particleMove {
+            to {
+                transform: 
+                    translate( 
+                        calc(var(--dx) * 200px), 
+                        calc(var(--dy) * 200px - 100px) 
+                    )
+                    scale(1.2);
+            }
+        }
+
+        @keyframes particleFade {
+            to { opacity: 0; }
+        }
+
+        @keyframes particlePulse {
+            50% { transform: scale(1.5); }
+        }
+    </style>
+</head>
+<body>
+    <script>
+        const blessings = [
+            "🎤 希望侗儿小姐姐，早日康复！",
+            "✨ 世界第一可爱侗儿！",
+            "🌸 人美声甜侗儿！",
+            "💖 侗儿笑容治愈全世界！",
+            "🌟 守护最好的侗儿！", 
+            "🎶 驱散侗儿所有阴霾～",
+            "🌺 元气满满侗儿酱！",
+            "🍭 侗儿最棒！",
+            "🌙 好快快～",
+            "🌈 侗儿的笑容是我的阳光"
+        ];
+
+        function getRandomColor() {
+            return `hsl(${30 + Math.random()*60}, 100%, 65%)`;
+        }
+
+        function getRandomGradient() {
+            const baseHue = Math.random() * 360;
+            return [
+                `hsl(${baseHue}, 70%, 60%)`,
+                `hsl(${(baseHue + 60) % 360}, 70%, 70%)`,
+                `hsl(${(baseHue + 120) % 360}, 70%, 80%)`
+            ];
+        }
+
+        function createBlessing(x, y) {
+            const bless = document.createElement('div');
+            bless.className = 'blessing';
+            bless.textContent = blessings[Math.floor(Math.random() * blessings.length)];
+            bless.style.color = getRandomColor();
+            
+            const rotation = (Math.random() > 0.5 ? 1 : -1) * 360 * (1 + Math.random()*2);
+            bless.style.setProperty('--rotate-end', `${rotation}deg`);
+            bless.style.setProperty('--duration', `${5 + Math.random() * 10}s`);
+            bless.style.left = (x || Math.random() * window.innerWidth * 0.8) + 'px';
+            bless.style.top = (y || window.innerHeight) + 'px';
+            
+            document.body.appendChild(bless);
+            setTimeout(() => bless.remove(), 15000);
+        }
+
+        document.body.addEventListener('click', (e) => {
+            // 更新背景
+            const [c1, c2, c3] = getRandomGradient();
+            document.body.style.cssText = `
+                --color1: ${c1};
+                --color2: ${c2};
+                --color3: ${c3};
+                background-position: ${Math.random()*100}% ${Math.random()*100}%;
+            `;
+
+            // 生成粒子
+            for(let i=0; i<30; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const particle = document.createElement('div');
+                const size = 4 + Math.random() * 8;
+                const speed = 0.3 + Math.random() * 0.7;
+                
+                particle.style.cssText = `
+                    left: ${e.clientX - size/2}px;
+                    top: ${e.clientY - size/2}px;
+                    color: ${getRandomColor()};
+                    --size: ${size}px;
+                    --dx: ${Math.cos(angle) * speed};
+                    --dy: ${Math.sin(angle) * speed - 0.5};
+                    --particle-dur: ${0.6 + Math.random() * 0.6}s;
+                `;
+
+                particle.className = 'particle';
+                document.body.appendChild(particle);
+                setTimeout(() => particle.remove(), 1200);
+            }
+
+            createBlessing(e.clientX, e.clientY);
+        });
+
+        setInterval(() => createBlessing(), 2000 + Math.random()*2000);
+        createBlessing();
+    </script>
+</body>
+</html>
