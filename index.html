@@ -1,9 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <!-- 新增视口设置 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
+        /* 新增计数器样式 */
+        #luckCounter {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            color: gold;
+            text-shadow: 0 0 10px rgba(255,215,0,0.5);
+            z-index: 9999;
+            background: rgba(0,0,0,0.3);
+            padding: 10px 20px;
+            border-radius: 20px;
+            transition: transform 0.3s;
+            backdrop-filter: blur(3px);
+        }
+        #luckCounter:hover {
+            transform: scale(1.1);
+        }
+
         body {
             background: linear-gradient(
                 45deg,
@@ -52,12 +70,18 @@
         /* 移动端适配 */
         @media (max-width: 600px) {
             .blessing { 
-                font-size: 24px;  /* 放大 */
-                max-width: 480vw;  /* 新增宽度限制 */
+                font-size: 24px;
+                max-width: 480vw;
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
-            .particle { --size: 6px; }  /* 调大粒子尺寸 */
+            .particle { --size: 6px; }
+            #luckCounter {
+                font-size: 32px;
+                top: 10px;
+                right: 10px;
+                padding: 8px 16px;
+            }
         }
 
         @keyframes floatUp {
@@ -86,7 +110,15 @@
     </style>
 </head>
 <body>
+    <!-- 好运计数器 -->
+    <div id="luckCounter">好运+0</div>
+
     <script>
+        // 初始化计数器
+        let luckCount = parseInt(localStorage.getItem('luckCount')) || 0;
+        const counterEl = document.getElementById('luckCounter');
+        counterEl.textContent = `好运+${luckCount}`;
+
         const blessings = [
             "🎤 希望侗儿小姐姐，早日康复！",
             "✨ 世界第一可爱侗儿！",
@@ -123,19 +155,24 @@
             bless.style.setProperty('--rotate-end', `${rotation}deg`);
             bless.style.setProperty('--duration', `${5 + Math.random() * 10}s`);
             
-            // 优化后的位置计算
+            // 优化位置计算
             bless.style.left = Math.min(
                 x || Math.random() * window.innerWidth * 0.7, 
-                window.innerWidth - 300  // 右侧留出300px边距
+                window.innerWidth - 300
             ) + 'px';
-            
-            bless.style.top = (y || window.innerHeight - 100) + 'px';  // 初始高度提升100px
+            bless.style.top = (y || window.innerHeight - 100) + 'px';
             
             document.body.appendChild(bless);
             setTimeout(() => bless.remove(), 15000);
         }
 
         document.body.addEventListener('click', (e) => {
+            // 更新计数器
+            luckCount++;
+            counterEl.textContent = `好运+${luckCount}`;
+            localStorage.setItem('luckCount', luckCount);
+
+            // 更新背景
             const [c1, c2, c3] = getRandomGradient();
             document.body.style.cssText = `
                 --color1: ${c1};
@@ -144,6 +181,7 @@
                 background-position: ${Math.random()*100}% ${Math.random()*100}%;
             `;
 
+            // 生成粒子
             for(let i=0; i<30; i++) {
                 const angle = Math.random() * Math.PI * 2;
                 const particle = document.createElement('div');
